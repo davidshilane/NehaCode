@@ -85,7 +85,7 @@ export default function Music() {
               className="absolute inset-0 bg-cover bg-center transition-all duration-700"
               style={{ 
                 // Replace this URL with your desired background image
-                backgroundImage: `url('/IMG_6141.jpg')`,
+                backgroundImage: `url('/IMG_6141.JPG')`,
                 filter: 'brightness(0.6)' 
               }}
             />

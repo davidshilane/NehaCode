@@ -8,10 +8,10 @@ export default function Memories() {
   const memories = [
     { src: '/first.jpg', alt: 'Our first pic' },
     { src: '/IMG_6494.jpg', alt: 'That magical eye contact' },
-    { src: '/IMG_5076.jpg', alt: 'Love in ice cream cafe' },
+    { src: '/IMG_5076.JPG', alt: 'Love in ice cream cafe' },
     { src: '/hot.jpg', alt: 'My Hottest Girl' },
-    { src: '/cute.jpg', alt: 'My Cutest Girl' },
-    { src: '/IMG_6566.jpg', alt: 'My My Mine Simple' },
+    { src: '/cute.JPG', alt: 'My Cutest Girl' },
+    { src: '/IMG_6566.JPG', alt: 'My My Mine Simple' },
   ];
 
   return (
