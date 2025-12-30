@@ -4,6 +4,24 @@ import { Heart, X } from 'lucide-react';
 import { useState } from 'react';
 import confetti from 'canvas-confetti';
 
+// 1. Define static data for background hearts to avoid hydration errors
+// (Positions, sizes, and animation delays are pre-defined here)
+const floatingHearts = Array.from({ length: 20 }).map((_, i) => ({
+  id: i,
+  // Random-looking positions between 5% and 95%
+  top: `${(i * 7 + 5) % 90}%`,
+  left: `${(i * 13 + 2) % 95}%`,
+  // Varying sizes between 20px and 50px
+  size: 20 + (i % 5) * 8,
+  // Varying animation delays for natural look
+  delay: `${(i % 3) * 0.7}s`,
+  // Alternating colors for depth (lighter pinks)
+  color: i % 2 === 0 ? 'text-pink-200/40' : 'text-pink-300/30',
+  // Varying animations
+  animation: i % 3 === 0 ? 'animate-bounce' : 'animate-pulse',
+}));
+
+
 interface FinalSectionProps {
   onILoveYou?: () => void;
 }
@@ -34,30 +52,48 @@ export default function FinalSection({ onILoveYou }: FinalSectionProps) {
   };
 
   return (
+    // Added 'overflow-hidden' to ensure hearts stay inside this pink section
     <section className="relative py-32 px-4 bg-gradient-to-b from-pink-500 to-pink-600 text-white overflow-hidden">
-      {/* Background Floating Hearts */}
-      <div className="absolute inset-0 pointer-events-none opacity-20">
-        <Heart className="absolute top-10 left-10 animate-bounce text-pink-200" size={40} />
-        <Heart className="absolute bottom-20 right-1/4 animate-pulse text-pink-100" size={60} />
+      
+      {/* --- NEW BACKGROUND: MANY GLOWING HEARTS --- */}
+      <div className="absolute inset-0 pointer-events-none">
+        {floatingHearts.map((heart) => (
+          <Heart
+            key={heart.id}
+            size={heart.size}
+            className={`absolute ${heart.color} ${heart.animation} 
+              // This drop-shadow creates the "glowing" effect
+              drop-shadow-[0_0_8px_rgba(255,200,220,0.6)]
+            `}
+            style={{
+              top: heart.top,
+              left: heart.left,
+              animationDelay: heart.delay,
+              animationDuration: '4s', // Slower, smoother animation
+            }}
+            // Fill some hearts, leave others as outlines for texture
+            fill={heart.id % 3 === 0 ? "currentColor" : "none"}
+          />
+        ))}
       </div>
 
-      <div className="max-w-3xl mx-auto text-center relative z-10">
-        <div className="mb-6 text-pink-100 tracking-widest text-sm font-bold uppercase">
+      <div className="max-w-xl mx-auto text-center relative z-10">
+        <div className="mb-6 text-pink-100 tracking-widest text-xl font-bold uppercase drop-shadow-sm">
           ✨ CELEBRATING US ✨
         </div>
 
-        <h2 className="text-6xl md:text-8xl font-bold mb-8 drop-shadow-lg" style={{fontFamily: 'Playfair Display, serif'}}>
+        <h2 className="text-6xl md:text-8xl font-bold mb-8 drop-shadow-xl" style={{fontFamily: 'Playfair Display, serif'}}>
           Forever & Always
         </h2>
 
-        <p className="text-xl md:text-2xl mb-12 text-pink-50 font-light leading-relaxed">
+        <p className="text-xl md:text-2xl mb-12 text-pink-50 font-light leading-relaxed drop-shadow">
           Thank you for being the most incredible part of my life. <br />
           Here's to endless love and new adventures together.
         </p>
 
         <button
           onClick={handleSurprise}
-          className="group bg-white text-pink-600 hover:bg-pink-50 px-12 py-5 rounded-full font-bold text-xl flex items-center gap-3 mx-auto transition-all transform hover:scale-110 shadow-xl"
+          className="group bg-white text-pink-600 hover:bg-pink-50 px-12 py-5 rounded-full font-bold text-xl flex items-center gap-3 mx-auto transition-all transform hover:scale-110 shadow-[0_0_30px_rgba(255,255,255,0.5)]"
         >
           <Heart size={28} className="group-hover:fill-pink-600 transition-all" />
           Click for a Surprise

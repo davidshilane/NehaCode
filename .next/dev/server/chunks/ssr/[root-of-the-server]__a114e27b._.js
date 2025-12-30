@@ -557,7 +557,7 @@ function Memories() {
             alt: 'That magical eye contact'
         },
         {
-            src: '/IMG_5076.jpg',
+            src: '/IMG_5076.JPG',
             alt: 'Love in ice cream cafe'
         },
         {
@@ -565,11 +565,11 @@ function Memories() {
             alt: 'My Hottest Girl'
         },
         {
-            src: '/cute.jpg',
+            src: '/cute.JPG',
             alt: 'My Cutest Girl'
         },
         {
-            src: '/IMG_6566.jpg',
+            src: '/IMG_6566.JPG',
             alt: 'My My Mine Simple'
         }
     ];
@@ -705,8 +705,6 @@ var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist
 ;
 ;
 ;
-// 1. Playlist Data
-// Note: Ensure your .mp3 files are located in the /public folder
 const PLAYLIST = [
     {
         title: "Aa Jao Meri Tamanna",
@@ -721,7 +719,7 @@ const PLAYLIST = [
     {
         title: "Be Intehaan",
         artist: "Race 2",
-        src: "/Be Intehaan.mp3"
+        src: "/be intehaan.mp3"
     },
     {
         title: "Dhokha Dhadi",
@@ -741,7 +739,7 @@ const PLAYLIST = [
     {
         title: "Kinna Sona",
         artist: "Bhaag Johnny",
-        src: "/Kinna Sona.mp3"
+        src: "/kinna sona.mp3"
     },
     {
         title: "Maahi",
@@ -766,7 +764,7 @@ const PLAYLIST = [
     {
         title: "Tere leye",
         artist: "Prince",
-        src: "/Tere leye.mp3"
+        src: "/Tere Leye.mp3"
     },
     {
         title: "Tu Jaane Na",
@@ -776,15 +774,43 @@ const PLAYLIST = [
     {
         title: "Tum Se Hi",
         artist: "Jab We Met",
-        src: "/Tum Se Hi.mp3"
+        src: "/tum se hi.mp3"
     }
 ];
 function Music() {
     const [currentIndex, setCurrentIndex] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(0);
     const [isPlaying, setIsPlaying] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(false);
+    const [currentTime, setCurrentTime] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(0);
+    const [duration, setDuration] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(0);
     const audioRef = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useRef"])(null);
     const currentSong = PLAYLIST[currentIndex];
-    // Function to handle Play and Pause toggle
+    // Format time in seconds to MM:SS
+    const formatTime = (time)=>{
+        if (isNaN(time)) return "0:00";
+        const minutes = Math.floor(time / 60);
+        const seconds = Math.floor(time % 60);
+        return `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+    };
+    // Update progress as song plays
+    const handleTimeUpdate = ()=>{
+        if (audioRef.current) {
+            setCurrentTime(audioRef.current.currentTime);
+        }
+    };
+    // Set duration when metadata loads
+    const handleLoadedMetadata = ()=>{
+        if (audioRef.current) {
+            setDuration(audioRef.current.duration);
+        }
+    };
+    // Seek song when slider is moved
+    const handleSliderChange = (e)=>{
+        const time = parseFloat(e.target.value);
+        setCurrentTime(time);
+        if (audioRef.current) {
+            audioRef.current.currentTime = time;
+        }
+    };
     const togglePlay = ()=>{
         if (!audioRef.current) return;
         if (isPlaying) {
@@ -794,22 +820,16 @@ function Music() {
         }
         setIsPlaying(!isPlaying);
     };
-    // Function to change the current song
     const changeSong = (index)=>{
-        // Loop back to start/end using modulo operator
         const newIndex = (index + PLAYLIST.length) % PLAYLIST.length;
         setCurrentIndex(newIndex);
         setIsPlaying(true);
     };
-    // Automatically load and play when the song index changes
     (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useEffect"])(()=>{
         if (audioRef.current) {
             audioRef.current.load();
             if (isPlaying) {
-                const playPromise = audioRef.current.play();
-                if (playPromise !== undefined) {
-                    playPromise.catch(()=>console.log("User interaction required for autoplay"));
-                }
+                audioRef.current.play().catch(()=>console.log("Interaction required"));
             }
         }
     }, [
@@ -825,78 +845,123 @@ function Music() {
                     style: {
                         fontFamily: 'Playfair Display, serif'
                     },
-                    children: "Music For Us"
+                    children: "🩷 Music For Us 🩷"
                 }, void 0, false, {
                     fileName: "[project]/components/music.tsx",
-                    lineNumber: 68,
+                    lineNumber: 91,
                     columnNumber: 9
                 }, this),
                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("audio", {
                     ref: audioRef,
                     src: currentSong.src,
+                    onTimeUpdate: handleTimeUpdate,
+                    onLoadedMetadata: handleLoadedMetadata,
                     onEnded: ()=>changeSong(currentIndex + 1)
                 }, void 0, false, {
                     fileName: "[project]/components/music.tsx",
-                    lineNumber: 73,
+                    lineNumber: 96,
                     columnNumber: 9
                 }, this),
                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                     className: "bg-white shadow-2xl rounded-3xl overflow-hidden border border-pink-50",
                     children: [
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                            className: "relative h-110 flex flex-col items-center justify-center overflow-hidden",
+                            className: "relative h-auto flex flex-col items-center justify-center overflow-hidden py-12",
                             children: [
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                     className: "absolute inset-0 bg-cover bg-center transition-all duration-700",
                                     style: {
-                                        // Replace this URL with your desired background image
-                                        backgroundImage: `url('/IMG_6141.jpg')`,
+                                        backgroundImage: `url('/IMG_6141.JPG')`,
                                         filter: 'brightness(0.6)'
                                     }
                                 }, void 0, false, {
                                     fileName: "[project]/components/music.tsx",
-                                    lineNumber: 84,
+                                    lineNumber: 107,
                                     columnNumber: 13
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                     className: "absolute inset-0 bg-black/20 backdrop-blur-[3px]"
                                 }, void 0, false, {
                                     fileName: "[project]/components/music.tsx",
-                                    lineNumber: 94,
+                                    lineNumber: 114,
                                     columnNumber: 13
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                    className: "relative z-10 flex flex-col items-center text-center px-6",
+                                    className: "relative z-10 flex flex-col items-center text-center px-6 w-full",
                                     children: [
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                                            className: `bg-pink-500/90 w-28 h-28 rounded-full flex items-center justify-center mb-4 shadow-2xl transition-transform duration-1000 ${isPlaying ? 'rotate-180 scale-105' : ''}`,
+                                            className: `bg-pink-500/90 w-24 h-24 rounded-full flex items-center justify-center mb-4 shadow-2xl transition-transform duration-1000 ${isPlaying ? 'rotate-180 scale-105' : ''}`,
                                             children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$music$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__MusicIcon$3e$__["MusicIcon"], {
-                                                size: 50,
+                                                size: 40,
                                                 className: "text-white"
                                             }, void 0, false, {
                                                 fileName: "[project]/components/music.tsx",
-                                                lineNumber: 100,
+                                                lineNumber: 118,
                                                 columnNumber: 17
                                             }, this)
                                         }, void 0, false, {
                                             fileName: "[project]/components/music.tsx",
-                                            lineNumber: 99,
+                                            lineNumber: 117,
                                             columnNumber: 15
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("h3", {
-                                            className: "text-2xl font-bold text-white mb-1 drop-shadow-lg",
+                                            className: "text-xl font-bold text-white mb-1 drop-shadow-lg",
                                             children: currentSong.title
                                         }, void 0, false, {
                                             fileName: "[project]/components/music.tsx",
-                                            lineNumber: 104,
+                                            lineNumber: 121,
                                             columnNumber: 15
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
-                                            className: "text-pink-200 font-medium mb-6 drop-shadow-md",
+                                            className: "text-pink-200 text-sm font-medium mb-6 drop-shadow-md",
                                             children: currentSong.artist
                                         }, void 0, false, {
                                             fileName: "[project]/components/music.tsx",
-                                            lineNumber: 105,
+                                            lineNumber: 122,
+                                            columnNumber: 15
+                                        }, this),
+                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                            className: "w-full max-w-md px-4 mb-6",
+                                            children: [
+                                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
+                                                    type: "range",
+                                                    min: "0",
+                                                    max: duration || 0,
+                                                    value: currentTime,
+                                                    onChange: handleSliderChange,
+                                                    className: "w-full h-1.5 bg-white/30 rounded-lg appearance-none cursor-pointer accent-pink-500"
+                                                }, void 0, false, {
+                                                    fileName: "[project]/components/music.tsx",
+                                                    lineNumber: 126,
+                                                    columnNumber: 17
+                                                }, this),
+                                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                                    className: "flex justify-between text-[10px] text-white/80 mt-2 font-mono",
+                                                    children: [
+                                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                                                            children: formatTime(currentTime)
+                                                        }, void 0, false, {
+                                                            fileName: "[project]/components/music.tsx",
+                                                            lineNumber: 135,
+                                                            columnNumber: 19
+                                                        }, this),
+                                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                                                            children: formatTime(duration)
+                                                        }, void 0, false, {
+                                                            fileName: "[project]/components/music.tsx",
+                                                            lineNumber: 136,
+                                                            columnNumber: 19
+                                                        }, this)
+                                                    ]
+                                                }, void 0, true, {
+                                                    fileName: "[project]/components/music.tsx",
+                                                    lineNumber: 134,
+                                                    columnNumber: 17
+                                                }, this)
+                                            ]
+                                        }, void 0, true, {
+                                            fileName: "[project]/components/music.tsx",
+                                            lineNumber: 125,
                                             columnNumber: 15
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -906,74 +971,74 @@ function Music() {
                                                     onClick: ()=>changeSong(currentIndex - 1),
                                                     className: "text-white/80 hover:text-white transition-all transform active:scale-90",
                                                     children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$skip$2d$back$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__SkipBack$3e$__["SkipBack"], {
-                                                        size: 30,
+                                                        size: 28,
                                                         fill: "currentColor"
                                                     }, void 0, false, {
                                                         fileName: "[project]/components/music.tsx",
-                                                        lineNumber: 110,
+                                                        lineNumber: 143,
                                                         columnNumber: 19
                                                     }, this)
                                                 }, void 0, false, {
                                                     fileName: "[project]/components/music.tsx",
-                                                    lineNumber: 109,
+                                                    lineNumber: 142,
                                                     columnNumber: 17
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
                                                     onClick: togglePlay,
-                                                    className: "bg-white text-pink-500 hover:scale-110 w-16 h-16 rounded-full flex items-center justify-center transition-all shadow-xl active:scale-95",
+                                                    className: "bg-white text-pink-500 hover:scale-110 w-14 h-14 rounded-full flex items-center justify-center transition-all shadow-xl active:scale-95",
                                                     children: isPlaying ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$pause$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__Pause$3e$__["Pause"], {
-                                                        size: 28,
+                                                        size: 24,
                                                         fill: "currentColor"
                                                     }, void 0, false, {
                                                         fileName: "[project]/components/music.tsx",
-                                                        lineNumber: 117,
+                                                        lineNumber: 150,
                                                         columnNumber: 32
                                                     }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$play$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__Play$3e$__["Play"], {
-                                                        size: 28,
+                                                        size: 24,
                                                         fill: "currentColor",
                                                         className: "ml-1"
                                                     }, void 0, false, {
                                                         fileName: "[project]/components/music.tsx",
-                                                        lineNumber: 117,
+                                                        lineNumber: 150,
                                                         columnNumber: 74
                                                     }, this)
                                                 }, void 0, false, {
                                                     fileName: "[project]/components/music.tsx",
-                                                    lineNumber: 113,
+                                                    lineNumber: 146,
                                                     columnNumber: 17
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
                                                     onClick: ()=>changeSong(currentIndex + 1),
                                                     className: "text-white/80 hover:text-white transition-all transform active:scale-90",
                                                     children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$skip$2d$forward$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__SkipForward$3e$__["SkipForward"], {
-                                                        size: 30,
+                                                        size: 28,
                                                         fill: "currentColor"
                                                     }, void 0, false, {
                                                         fileName: "[project]/components/music.tsx",
-                                                        lineNumber: 121,
+                                                        lineNumber: 154,
                                                         columnNumber: 19
                                                     }, this)
                                                 }, void 0, false, {
                                                     fileName: "[project]/components/music.tsx",
-                                                    lineNumber: 120,
+                                                    lineNumber: 153,
                                                     columnNumber: 17
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/components/music.tsx",
-                                            lineNumber: 108,
+                                            lineNumber: 141,
                                             columnNumber: 15
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/components/music.tsx",
-                                    lineNumber: 97,
+                                    lineNumber: 116,
                                     columnNumber: 13
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/components/music.tsx",
-                            lineNumber: 82,
+                            lineNumber: 106,
                             columnNumber: 11
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -981,10 +1046,10 @@ function Music() {
                             children: [
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("h4", {
                                     className: "text-xs font-bold text-gray-400 uppercase tracking-widest mb-4 px-4",
-                                    children: "Current Playlist"
+                                    children: "Select the song Baby"
                                 }, void 0, false, {
                                     fileName: "[project]/components/music.tsx",
-                                    lineNumber: 129,
+                                    lineNumber: 162,
                                     columnNumber: 13
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1001,7 +1066,7 @@ function Music() {
                                                             children: index + 1 < 10 ? `0${index + 1}` : index + 1
                                                         }, void 0, false, {
                                                             fileName: "[project]/components/music.tsx",
-                                                            lineNumber: 140,
+                                                            lineNumber: 173,
                                                             columnNumber: 21
                                                         }, this),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1011,7 +1076,7 @@ function Music() {
                                                                     children: song.title
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/components/music.tsx",
-                                                                    lineNumber: 144,
+                                                                    lineNumber: 177,
                                                                     columnNumber: 23
                                                                 }, this),
                                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -1019,19 +1084,19 @@ function Music() {
                                                                     children: song.artist
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/components/music.tsx",
-                                                                    lineNumber: 145,
+                                                                    lineNumber: 178,
                                                                     columnNumber: 23
                                                                 }, this)
                                                             ]
                                                         }, void 0, true, {
                                                             fileName: "[project]/components/music.tsx",
-                                                            lineNumber: 143,
+                                                            lineNumber: 176,
                                                             columnNumber: 21
                                                         }, this)
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/components/music.tsx",
-                                                    lineNumber: 139,
+                                                    lineNumber: 172,
                                                     columnNumber: 19
                                                 }, this),
                                                 currentIndex === index && isPlaying && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1044,7 +1109,7 @@ function Music() {
                                                             }
                                                         }, void 0, false, {
                                                             fileName: "[project]/components/music.tsx",
-                                                            lineNumber: 152,
+                                                            lineNumber: 184,
                                                             columnNumber: 23
                                                         }, this),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1054,7 +1119,7 @@ function Music() {
                                                             }
                                                         }, void 0, false, {
                                                             fileName: "[project]/components/music.tsx",
-                                                            lineNumber: 153,
+                                                            lineNumber: 185,
                                                             columnNumber: 23
                                                         }, this),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1064,47 +1129,47 @@ function Music() {
                                                             }
                                                         }, void 0, false, {
                                                             fileName: "[project]/components/music.tsx",
-                                                            lineNumber: 154,
+                                                            lineNumber: 186,
                                                             columnNumber: 23
                                                         }, this)
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/components/music.tsx",
-                                                    lineNumber: 151,
+                                                    lineNumber: 183,
                                                     columnNumber: 21
                                                 }, this)
                                             ]
                                         }, index, true, {
                                             fileName: "[project]/components/music.tsx",
-                                            lineNumber: 132,
+                                            lineNumber: 165,
                                             columnNumber: 17
                                         }, this))
                                 }, void 0, false, {
                                     fileName: "[project]/components/music.tsx",
-                                    lineNumber: 130,
+                                    lineNumber: 163,
                                     columnNumber: 13
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/components/music.tsx",
-                            lineNumber: 128,
+                            lineNumber: 161,
                             columnNumber: 11
                         }, this)
                     ]
                 }, void 0, true, {
                     fileName: "[project]/components/music.tsx",
-                    lineNumber: 79,
+                    lineNumber: 104,
                     columnNumber: 9
                 }, this)
             ]
         }, void 0, true, {
             fileName: "[project]/components/music.tsx",
-            lineNumber: 67,
+            lineNumber: 90,
             columnNumber: 7
         }, this)
     }, void 0, false, {
         fileName: "[project]/components/music.tsx",
-        lineNumber: 66,
+        lineNumber: 89,
         columnNumber: 5
     }, this);
 }
@@ -1126,6 +1191,24 @@ var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$canvas$2d$co
 ;
 ;
 ;
+// 1. Define static data for background hearts to avoid hydration errors
+// (Positions, sizes, and animation delays are pre-defined here)
+const floatingHearts = Array.from({
+    length: 20
+}).map((_, i)=>({
+        id: i,
+        // Random-looking positions between 5% and 95%
+        top: `${(i * 7 + 5) % 90}%`,
+        left: `${(i * 13 + 2) % 95}%`,
+        // Varying sizes between 20px and 50px
+        size: 20 + i % 5 * 8,
+        // Varying animation delays for natural look
+        delay: `${i % 3 * 0.7}s`,
+        // Alternating colors for depth (lighter pinks)
+        color: i % 2 === 0 ? 'text-pink-200/40' : 'text-pink-300/30',
+        // Varying animations
+        animation: i % 3 === 0 ? 'animate-bounce' : 'animate-pulse'
+    }));
 function FinalSection({ onILoveYou }) {
     const [showVideo, setShowVideo] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(false);
     const handleSurprise = ()=>{
@@ -1164,82 +1247,84 @@ function FinalSection({ onILoveYou }) {
         setShowVideo(true);
         if (onILoveYou) onILoveYou();
     };
-    return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("section", {
+    return(// Added 'overflow-hidden' to ensure hearts stay inside this pink section
+    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("section", {
         className: "relative py-32 px-4 bg-gradient-to-b from-pink-500 to-pink-600 text-white overflow-hidden",
         children: [
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                className: "absolute inset-0 pointer-events-none opacity-20",
-                children: [
-                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$heart$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__Heart$3e$__["Heart"], {
-                        className: "absolute top-10 left-10 animate-bounce text-pink-200",
-                        size: 40
-                    }, void 0, false, {
+                className: "absolute inset-0 pointer-events-none",
+                children: floatingHearts.map((heart)=>/*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$heart$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__Heart$3e$__["Heart"], {
+                        size: heart.size,
+                        className: `absolute ${heart.color} ${heart.animation} 
+              // This drop-shadow creates the "glowing" effect
+              drop-shadow-[0_0_8px_rgba(255,200,220,0.6)]
+            `,
+                        style: {
+                            top: heart.top,
+                            left: heart.left,
+                            animationDelay: heart.delay,
+                            animationDuration: '4s'
+                        },
+                        // Fill some hearts, leave others as outlines for texture
+                        fill: heart.id % 3 === 0 ? "currentColor" : "none"
+                    }, heart.id, false, {
                         fileName: "[project]/components/final-section.tsx",
-                        lineNumber: 40,
-                        columnNumber: 9
-                    }, this),
-                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$heart$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__Heart$3e$__["Heart"], {
-                        className: "absolute bottom-20 right-1/4 animate-pulse text-pink-100",
-                        size: 60
-                    }, void 0, false, {
-                        fileName: "[project]/components/final-section.tsx",
-                        lineNumber: 41,
-                        columnNumber: 9
-                    }, this)
-                ]
-            }, void 0, true, {
+                        lineNumber: 61,
+                        columnNumber: 11
+                    }, this))
+            }, void 0, false, {
                 fileName: "[project]/components/final-section.tsx",
-                lineNumber: 39,
+                lineNumber: 59,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                className: "max-w-3xl mx-auto text-center relative z-10",
+                className: "max-w-xl mx-auto text-center relative z-10",
                 children: [
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-                        className: "mb-6 text-pink-100 tracking-widest text-sm font-bold uppercase",
+                        className: "mb-6 text-pink-100 tracking-widest text-xl font-bold uppercase drop-shadow-sm",
                         children: "✨ CELEBRATING US ✨"
                     }, void 0, false, {
                         fileName: "[project]/components/final-section.tsx",
-                        lineNumber: 45,
+                        lineNumber: 81,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("h2", {
-                        className: "text-6xl md:text-8xl font-bold mb-8 drop-shadow-lg",
+                        className: "text-6xl md:text-8xl font-bold mb-8 drop-shadow-xl",
                         style: {
                             fontFamily: 'Playfair Display, serif'
                         },
                         children: "Forever & Always"
                     }, void 0, false, {
                         fileName: "[project]/components/final-section.tsx",
-                        lineNumber: 49,
+                        lineNumber: 85,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
-                        className: "text-xl md:text-2xl mb-12 text-pink-50 font-light leading-relaxed",
+                        className: "text-xl md:text-2xl mb-12 text-pink-50 font-light leading-relaxed drop-shadow",
                         children: [
                             "Thank you for being the most incredible part of my life. ",
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("br", {}, void 0, false, {
                                 fileName: "[project]/components/final-section.tsx",
-                                lineNumber: 54,
+                                lineNumber: 90,
                                 columnNumber: 68
                             }, this),
                             "Here's to endless love and new adventures together."
                         ]
                     }, void 0, true, {
                         fileName: "[project]/components/final-section.tsx",
-                        lineNumber: 53,
+                        lineNumber: 89,
                         columnNumber: 9
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
                         onClick: handleSurprise,
-                        className: "group bg-white text-pink-600 hover:bg-pink-50 px-12 py-5 rounded-full font-bold text-xl flex items-center gap-3 mx-auto transition-all transform hover:scale-110 shadow-xl",
+                        className: "group bg-white text-pink-600 hover:bg-pink-50 px-12 py-5 rounded-full font-bold text-xl flex items-center gap-3 mx-auto transition-all transform hover:scale-110 shadow-[0_0_30px_rgba(255,255,255,0.5)]",
                         children: [
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$heart$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__Heart$3e$__["Heart"], {
                                 size: 28,
                                 className: "group-hover:fill-pink-600 transition-all"
                             }, void 0, false, {
                                 fileName: "[project]/components/final-section.tsx",
-                                lineNumber: 62,
+                                lineNumber: 98,
                                 columnNumber: 11
                             }, this),
                             "Click for a Surprise",
@@ -1248,19 +1333,19 @@ function FinalSection({ onILoveYou }) {
                                 className: "group-hover:fill-pink-600 transition-all"
                             }, void 0, false, {
                                 fileName: "[project]/components/final-section.tsx",
-                                lineNumber: 64,
+                                lineNumber: 100,
                                 columnNumber: 11
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/components/final-section.tsx",
-                        lineNumber: 58,
+                        lineNumber: 94,
                         columnNumber: 9
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/components/final-section.tsx",
-                lineNumber: 44,
+                lineNumber: 80,
                 columnNumber: 7
             }, this),
             showVideo && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1275,12 +1360,12 @@ function FinalSection({ onILoveYou }) {
                                 size: 20
                             }, void 0, false, {
                                 fileName: "[project]/components/final-section.tsx",
-                                lineNumber: 79,
+                                lineNumber: 115,
                                 columnNumber: 15
                             }, this)
                         }, void 0, false, {
                             fileName: "[project]/components/final-section.tsx",
-                            lineNumber: 75,
+                            lineNumber: 111,
                             columnNumber: 13
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("video", {
@@ -1291,26 +1376,26 @@ function FinalSection({ onILoveYou }) {
                             children: "Your browser does not support the video tag."
                         }, void 0, false, {
                             fileName: "[project]/components/final-section.tsx",
-                            lineNumber: 83,
+                            lineNumber: 119,
                             columnNumber: 13
                         }, this)
                     ]
                 }, void 0, true, {
                     fileName: "[project]/components/final-section.tsx",
-                    lineNumber: 72,
+                    lineNumber: 108,
                     columnNumber: 11
                 }, this)
             }, void 0, false, {
                 fileName: "[project]/components/final-section.tsx",
-                lineNumber: 70,
+                lineNumber: 106,
                 columnNumber: 9
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/components/final-section.tsx",
-        lineNumber: 37,
+        lineNumber: 56,
         columnNumber: 5
-    }, this);
+    }, this));
 }
 }),
 "[project]/components/letter-modal.tsx [app-ssr] (ecmascript)", ((__turbopack_context__) => {
