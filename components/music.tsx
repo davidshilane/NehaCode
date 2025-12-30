@@ -15,7 +15,7 @@ const PLAYLIST = [
   { title: "Mere Bina", artist: "Crook", src: "/Mere Bina.mp3" },
   { title: "Raabta", artist: "Agent Vinod", src: "/Raabta.mp3" },
   { title: "Rakhlo Tum Chupaake", artist: "Arpit Bala", src: "/Rakhlo Tum Chupaake.mp3" },
-  { title: "Tere leye", artist: "Prince", src: "/Tere Leye.mp3" },
+  { title: "Tere leye", artist: "Prince", src: "/Tere leye.mp3" },
   { title: "Tu Jaane Na", artist: "Ajab Prem Ki Ghazab Kahani", src: "/Tu Jaane Na.mp3" },
   { title: "Tum Se Hi", artist: "Jab We Met", src: "/tum se hi.mp3" }
 ];
